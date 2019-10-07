@@ -75,11 +75,7 @@ export default class Scatter {
 
   shouldDraw(q,w,realIndex, zRatio, pointsPos,dataPointIndex,radius,finishRadius,x,y) {
 		if (isABubble(zRatio)) {
-		  finishRadius = w.globals.seriesZ[realIndex][dataPointIndex] / zRatio
-		  if (typeof this.radiusSizes[realIndex] === 'undefined') {
-			this.radiusSizes.push([])
-		  }
-		  this.radiusSizes[realIndex].push(finishRadius)
+		  finishRadius = getBubbleFinishRadius(w,realIndex,dataPointIndex)
 		}
 
 		if (!w.config.chart.animations.enabled) {
@@ -105,6 +101,17 @@ export default class Scatter {
 		  return true
 	  else
 		  return false
+  }
+  
+  getBubbleFinishRadius()
+  {
+		let finishRadius = w.globals.seriesZ[realIndex][dataPointIndex] / zRatio
+		if (typeof this.radiusSizes[realIndex] === 'undefined') {
+			this.radiusSizes.push([])
+		}
+		this.radiusSizes[realIndex].push(finishRadius)
+		
+		return finishRadius
   }
   
   drawPoint(x, y, radius, finishRadius, realIndex, dataPointIndex, j) {
