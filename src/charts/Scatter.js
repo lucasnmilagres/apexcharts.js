@@ -43,44 +43,20 @@ export default class Scatter {
 
     if (pointsPos.x instanceof Array) {
       for (let q = 0; q < pointsPos.x.length; q++) {
-        let dataPointIndex = j + 1
-        let shouldDraw = true
-
-        // a small hack as we have 2 points for the first val to connect it
-        if (j === 0 && q === 0) dataPointIndex = 0
-        if (j === 0 && q === 1) dataPointIndex = 1
-
-        let radius = 0
-        let finishRadius = w.globals.markers.size[realIndex]
-
-        if (zRatio !== Infinity) {
-          // means we have a bubble
-          finishRadius = w.globals.seriesZ[realIndex][dataPointIndex] / zRatio
-          if (typeof this.radiusSizes[realIndex] === 'undefined') {
-            this.radiusSizes.push([])
-          }
-          this.radiusSizes[realIndex].push(finishRadius)
-        }
-
-        if (!w.config.chart.animations.enabled) {
-          radius = finishRadius
-        }
-
-        let x = pointsPos.x[q]
-        let y = pointsPos.y[q]
-
-        radius = radius || 0
-
-        if (
-          (x === 0 && y === 0) ||
-          y === null ||
-          typeof w.globals.series[realIndex][dataPointIndex] === 'undefined'
-        ) {
-          shouldDraw = false
-        }
-
-        if (shouldDraw) {
-          const circle = this.drawPoint(
+			let dataPointIndex = j + 1
+			
+			// a small hack as we have 2 points for the first val to connect it
+			if (j === 0 && q === 0) dataPointIndex = 0
+			if (j === 0 && q === 1) dataPointIndex = 1
+		  
+			let radius = 0
+			let finishRadius = w.globals.markers.size[realIndex]
+		  
+			let x = pointsPos.x[q]
+			let y = pointsPos.y[q]
+		  
+		  if (shouldDraw(q,w, realIndex, pointsPos, dataPointIndex,radius,finishRadius,x,y)) {
+			const circle = this.drawPoint(
             x,
             y,
             radius,
@@ -97,6 +73,33 @@ export default class Scatter {
     }
   }
 
+  shouldDraw(q,w,realIndex, zRatio, pointsPos,dataPointIndex,radius,finishRadius,x,y) {
+		if (zRatio !== Infinity) {
+		  // means we have a bubble
+		  finishRadius = w.globals.seriesZ[realIndex][dataPointIndex] / zRatio
+		  if (typeof this.radiusSizes[realIndex] === 'undefined') {
+			this.radiusSizes.push([])
+		  }
+		  this.radiusSizes[realIndex].push(finishRadius)
+		}
+
+		if (!w.config.chart.animations.enabled) {
+		  radius = finishRadius
+		}
+
+		radius = radius || 0
+
+		if (
+		  (x === 0 && y === 0) ||
+		  y === null ||
+		  typeof w.globals.series[realIndex][dataPointIndex] === 'undefined'
+		) {
+		  return false
+		}
+
+		return true
+  }
+  
   drawPoint(x, y, radius, finishRadius, realIndex, dataPointIndex, j) {
     const w = this.w
 
