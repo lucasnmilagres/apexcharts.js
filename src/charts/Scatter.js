@@ -74,8 +74,7 @@ export default class Scatter {
   }
 
   shouldDraw(q,w,realIndex, zRatio, pointsPos,dataPointIndex,radius,finishRadius,x,y) {
-		if (zRatio !== Infinity) {
-		  // means we have a bubble
+		if (isABubble(zRatio)) {
 		  finishRadius = w.globals.seriesZ[realIndex][dataPointIndex] / zRatio
 		  if (typeof this.radiusSizes[realIndex] === 'undefined') {
 			this.radiusSizes.push([])
@@ -98,6 +97,14 @@ export default class Scatter {
 		}
 
 		return true
+  }
+  
+  isABubble(zRatio)
+  {
+	  if (zRatio !== Infinity)
+		  return true
+	  else
+		  return false
   }
   
   drawPoint(x, y, radius, finishRadius, realIndex, dataPointIndex, j) {
